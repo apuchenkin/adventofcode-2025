@@ -17,7 +17,7 @@ import qualified Day1
 -- import qualified Day23
 -- import qualified Day24
 -- import qualified Day25
--- import qualified Day2
+import qualified Day2
 -- import qualified Day3
 -- import qualified Day4
 -- import qualified Day5
@@ -37,7 +37,7 @@ data Day a = Day
 getDay :: String -> Day (IO String)
 getDay idx = case idx of
   "1" -> Day (return . Day1.first) (return . Day1.second)
---   "2" -> Day (return . Day2.first) (return . Day2.second)
+  "2" -> Day (return . Day2.first) (return . Day2.second)
 --   "3" -> Day (return . Day3.first) (return . Day3.second)
 --   "4" -> Day (return . Day4.first) (return . Day4.second)
 --   "5" -> Day (return . Day5.first) (return . Day5.second)
