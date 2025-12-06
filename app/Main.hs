@@ -7,7 +7,7 @@ import qualified Day2
 import qualified Day3
 import qualified Day4
 import qualified Day5
--- import qualified Day6
+import qualified Day6
 -- import qualified Day7
 -- import qualified Day8
 -- import qualified Day9
@@ -27,7 +27,7 @@ getDay idx = case idx of
   "3" -> Day (return . Day3.first) (return . Day3.second)
   "4" -> Day (return . Day4.first) (return . Day4.second)
   "5" -> Day (return . Day5.first) (return . Day5.second)
---   "6" -> Day (return . Day6.first) (return . Day6.second)
+  "6" -> Day (return . Day6.first) (return . Day6.second)
 --   "7" -> Day (return . Day7.first) (return . Day7.second)
 --   "8" -> Day (return . Day8.first) (return . Day8.second)
 --   "9" -> Day (return . Day9.first) (return . Day9.second)
