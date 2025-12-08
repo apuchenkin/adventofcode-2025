@@ -33,6 +33,7 @@ library
       Day5
       Day6
       Day7
+      Day8
   other-modules:
       Paths_adventofcode2025
   autogen-modules:
@@ -56,7 +57,7 @@ executable adventofcode2025-exe
       Paths_adventofcode2025
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -O2 -with-rtsopts=-N
   build-depends:
       adventofcode2025
     , base >=4.7 && <5
@@ -75,7 +76,7 @@ test-suite adventofcode2025-test
       Paths_adventofcode2025
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -O2 -with-rtsopts=-N
   build-depends:
       adventofcode2025
     , base >=4.7 && <5
