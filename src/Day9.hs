@@ -20,9 +20,11 @@ data Direction = N | S | E | W
   deriving (Eq, Show, Ord)
 
 parse :: String -> [Coordinate]
-parse text = (\[x, y] -> (read x, read y)) . splitOn "," <$> res
+parse = map parseCoord . lines
   where
-    res = lines text
+    parseCoord s = case splitOn "," s of
+      [x, y] -> (read x, read y)
+      _ -> error $ "Invalid coordinate: " ++ s
 
 area :: Box -> Int
 area ((x1, y1), (x2, y2)) = succ (abs (x1 - x2)) * succ (abs (y1 - y2))
@@ -38,23 +40,17 @@ paths coordinates = zipWith (\prev next -> (readTurn prev next, next)) (last pai
   where
     pairs = zip coordinates (tail coordinates ++ [head coordinates])
     readTurn :: Path -> Path -> Turn
-    readTurn prev next = case direction prev of
-      N -> case direction next of
-        W -> L
-        E -> R
-        d -> error $ "invalid direction: " ++ show d
-      S -> case direction next of
-        W -> R
-        E -> L
-        d -> error $ "invalid direction: " ++ show d
-      W -> case direction next of
-        S -> L
-        N -> R
-        d -> error $ "invalid direction: " ++ show d
-      E -> case direction next of
-        S -> R
-        N -> L
-        d -> error $ "invalid direction: " ++ show d
+    readTurn prev next = turnMap (direction prev) (direction next)
+    turnMap :: Direction -> Direction -> Turn
+    turnMap N W = L
+    turnMap N E = R
+    turnMap S W = R
+    turnMap S E = L
+    turnMap W S = L
+    turnMap W N = R
+    turnMap E S = R
+    turnMap E N = L
+    turnMap d1 d2 = error $ "invalid direction: " ++ show (d1, d2)
 
 direction :: Path -> Direction
 direction ((x1, y1), (x2, y2))
@@ -63,13 +59,10 @@ direction ((x1, y1), (x2, y2))
   | otherwise = W
 
 toBox :: [Path] -> Box
-toBox paths' = ((xs, ys), (xs', ys'))
+toBox paths' = ((minimum xs, minimum ys), (maximum xs, maximum ys))
   where
     coordinates = concatMap (\(left, right) -> [left, right]) paths'
-    xs = minimum $ fst <$> coordinates
-    ys = minimum $ snd <$> coordinates
-    xs' = maximum $ fst <$> coordinates
-    ys' = maximum $ snd <$> coordinates
+    (xs, ys) = unzip coordinates
 
 pathLength :: Path -> Int
 pathLength ((x1, y1), (x2, y2)) = abs (x1 - x2) + abs (y1 - y2)
@@ -82,31 +75,26 @@ splitPath ((x1, y1), (x2, y2)) ((x3, y3), (x4, y4))
 
 simplify :: [Instruction] -> ST.State [Box] [Instruction]
 simplify [] = return []
-simplify [x] = return [x]
-simplify [x, y] = return [x, y]
-simplify [x, y, z] = return [x, y, z]
+simplify instructions
+  | length instructions <= 3 = return instructions
 simplify instructions@((d, steps) : (R, steps0) : (R, steps1) : (L, steps2) : zs)
   | pathLength steps > pathLength steps1 = do
       let (left, _) = splitPath steps steps2
-      _ <- ST.modify (\r -> toBox [steps0, steps1] : r)
+      ST.modify (toBox [steps0, steps1] :)
       simplify $ (d, left) : (R, (snd left, snd steps2)) : zs
-  | otherwise = do
-      rest <- simplify $ tail instructions
-      return $ head instructions : rest
+  | otherwise = (head instructions :) <$> simplify (tail instructions)
 simplify instructions@((d, steps) : (L, steps0) : (R, steps1) : (R, steps2) : zs)
   | pathLength steps2 > pathLength steps0 = do
       let (left, _) = splitPath steps2 steps
-      _ <- ST.modify (\r -> toBox [steps0, steps1] : r)
+      ST.modify (toBox [steps0, steps1] :)
       simplify $ (d, (fst steps, snd left)) : (R, (snd left, snd steps2)) : zs
-  | otherwise = do
-      rest <- simplify $ tail instructions
-      return $ head instructions : rest
-simplify (x : zs) = do
-  rest <- simplify zs
-  return (x : rest)
+  | otherwise = (head instructions :) <$> simplify (tail instructions)
+simplify (x : zs) = (x :) <$> simplify zs
 
 consistsOf :: Box -> [Box] -> Bool
-consistsOf box@(left, right) boxes = length gluedBoxes == 1 && head gluedBoxes == box
+consistsOf box@(left, right) boxes = case gluedBoxes of
+  [b] -> b == box
+  _ -> False
   where
     boxes' = nub $ concatMap (splitXY right) $ concatMap (splitXY left) boxes
     insideBoxes = sort $ filter (inside box) boxes'
@@ -123,11 +111,10 @@ glueY box1@((xl, yl), (xl', yl')) box2@((xr, yr), (xr', yr'))
   | otherwise = [box1, box2]
 
 glueXY :: Box -> Box -> [Box]
-glueXY l r = case glueX l r of
-  [box] -> [box]
-  _ -> case glueY l r of
-    [box] -> [box]
-    _ -> [l, r]
+glueXY l r
+  | [box] <- glueX l r = [box]
+  | [box] <- glueY l r = [box]
+  | otherwise = [l, r]
 
 glueBoxes :: [Box] -> [Box]
 glueBoxes [] = []
@@ -163,6 +150,11 @@ second :: String -> String
 second input = show $ maximum $ area <$> pairs
   where
     coordinates = parse input
-    (instructions', boxes) = until (\(i, _) -> length i <= 4) (\(i, b) -> ST.runState (simplify $ tail i ++ [head i]) b) (paths coordinates, [])
+    (instructions', boxes) = simplifyUntilDone (paths coordinates) []
     boxes' = toBox (snd <$> instructions') : boxes
     pairs = [(a, b) | a <- coordinates, b <- coordinates, a < b, consistsOf (toBox [(a, b)]) boxes']
+    simplifyUntilDone insts bs
+      | length insts <= 4 = (insts, bs)
+      | otherwise = simplifyUntilDone newInsts newBoxes
+      where
+        (newInsts, newBoxes) = ST.runState (simplify $ tail insts ++ [head insts]) bs
