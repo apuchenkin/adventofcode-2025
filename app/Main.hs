@@ -10,7 +10,7 @@ import qualified Day5
 import qualified Day6
 import qualified Day7
 import qualified Day8
--- import qualified Day9
+import qualified Day9
 import System.Environment (getArgs)
 
 type Solution a = String -> a
@@ -30,7 +30,7 @@ getDay idx = case idx of
   "6" -> Day (return . Day6.first) (return . Day6.second)
   "7" -> Day (return . Day7.first) (return . Day7.second)
   "8" -> Day (return . Day8.first) (return . Day8.second)
---   "9" -> Day (return . Day9.first) (return . Day9.second)
+  "9" -> Day (return . Day9.first) (return . Day9.second)
 --   "10" -> Day (return . Day10.first) (return . Day10.second)
 --   "11" -> Day (return . Day11.first) (return . Day11.second)
 --   "12" -> Day (return . Day12.first) (return . Day12.second)
