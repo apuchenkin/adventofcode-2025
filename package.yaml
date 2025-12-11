@@ -25,6 +25,9 @@ dependencies:
 - containers
 - matrix
 - mtl
+- search-algorithms
+- vector
+- topograph
 
 ghc-options:
 - -Wall

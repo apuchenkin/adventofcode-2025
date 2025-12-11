@@ -27,6 +27,8 @@ library
   exposed-modules:
       Day
       Day1
+      Day10
+      Day11
       Day2
       Day3
       Day4
@@ -47,7 +49,10 @@ library
     , containers
     , matrix
     , mtl
+    , search-algorithms
     , split
+    , topograph
+    , vector
   default-language: Haskell2010
 
 executable adventofcode2025-exe
@@ -65,7 +70,10 @@ executable adventofcode2025-exe
     , containers
     , matrix
     , mtl
+    , search-algorithms
     , split
+    , topograph
+    , vector
   default-language: Haskell2010
 
 test-suite adventofcode2025-test
@@ -84,5 +92,8 @@ test-suite adventofcode2025-test
     , containers
     , matrix
     , mtl
+    , search-algorithms
     , split
+    , topograph
+    , vector
   default-language: Haskell2010

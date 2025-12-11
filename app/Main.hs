@@ -2,7 +2,7 @@ module Main where
 
 import qualified Day1
 -- import qualified Day10
--- import qualified Day11
+import qualified Day11
 import qualified Day2
 import qualified Day3
 import qualified Day4
@@ -31,8 +31,8 @@ getDay idx = case idx of
   "7" -> Day (return . Day7.first) (return . Day7.second)
   "8" -> Day (return . Day8.first) (return . Day8.second)
   "9" -> Day (return . Day9.first) (return . Day9.second)
---   "10" -> Day (return . Day10.first) (return . Day10.second)
---   "11" -> Day (return . Day11.first) (return . Day11.second)
+  -- "10" -> Day (return . Day10.first) (return . Day10.second)
+  "11" -> Day (return . Day11.first) (return . Day11.second)
 --   "12" -> Day (return . Day12.first) (return . Day12.second)
   _ -> error "day unsupported"
 
