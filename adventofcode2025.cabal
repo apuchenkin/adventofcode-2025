@@ -29,6 +29,7 @@ library
       Day1
       Day10
       Day11
+      Day12
       Day2
       Day3
       Day4
@@ -47,6 +48,7 @@ library
   build-depends:
       base >=4.7 && <5
     , containers
+    , hmatrix
     , matrix
     , mtl
     , search-algorithms
@@ -68,6 +70,7 @@ executable adventofcode2025-exe
       adventofcode2025
     , base >=4.7 && <5
     , containers
+    , hmatrix
     , matrix
     , mtl
     , search-algorithms
@@ -90,6 +93,7 @@ test-suite adventofcode2025-test
       adventofcode2025
     , base >=4.7 && <5
     , containers
+    , hmatrix
     , matrix
     , mtl
     , search-algorithms
